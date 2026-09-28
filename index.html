@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roadmap maestro — F-Lex → producto vendible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7ECF3; --paper: #F3F6FA; --panel: #FDFEFF;
+    --line: #B9C6D8; --line-strong: #8FA1BA;
+    --ink: #16233A; --ink-soft: #47597A; --muted: #6B7C99;
+    --amber: #B9691E; --amber-soft: #F1E0C8;
+    --teal: #1E7C64; --teal-soft: #D8ECE5;
+    --red: #A73F3A; --code-bg: #EAF0F7;
+    --radius: 10px; --maxw: 860px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0C1320; --paper:#111A2B; --panel:#162135;
+      --line:#2A3B54; --line-strong:#3D5372;
+      --ink:#E7ECF3; --ink-soft:#B7C4D9; --muted:#8090AC;
+      --amber:#E8A34D; --amber-soft:#3A2E1B;
+      --teal:#54D1AE; --teal-soft:#163229;
+      --red:#E2756E; --code-bg:#0E1725;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0C1320; --paper:#111A2B; --panel:#162135;
+    --line:#2A3B54; --line-strong:#3D5372;
+    --ink:#E7ECF3; --ink-soft:#B7C4D9; --muted:#8090AC;
+    --amber:#E8A34D; --amber-soft:#3A2E1B;
+    --teal:#54D1AE; --teal-soft:#163229;
+    --red:#E2756E; --code-bg:#0E1725;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: calc(112px + env(safe-area-inset-top, 0px));}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size:15.5px; line-height:1.55;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:"Space Grotesk"; font-weight:600; letter-spacing:-0.01em; color:var(--ink); margin:0; }
+  code,.mono{ font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  header.top{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px); border-bottom:1px solid var(--line); padding: env(safe-area-inset-top,0px) 0 0 0; }
+  .top-inner{ max-width:var(--maxw); margin:0 auto; padding: 16px 20px 10px; }
+  .brand-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .brand-row h1{ font-size:1.28rem; }
+  .brand-row h1 .sub{ display:block; font-family:"IBM Plex Sans"; font-weight:500; font-size:0.82rem; color:var(--muted); margin-top:2px; }
+  .stack-meta{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); text-align:right; line-height:1.5; white-space:nowrap; }
+
+  .progress-row{ display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .progress-bar{ flex:1; height:7px; background:var(--line); border-radius:99px; overflow:hidden; display:flex; }
+  .progress-bar .seg-done{ background:var(--teal); height:100%; }
+  .progress-bar .seg-prog{ background:var(--amber); height:100%; }
+  .progress-txt{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+  .updated-txt{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); margin-top:4px; }
+
+  .rail-wrap{ max-width:var(--maxw); margin:0 auto; padding: 10px 20px 10px; }
+  .rail{ display:flex; gap:3px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  .rail::-webkit-scrollbar{display:none;}
+  .rail button{ flex:1 0 auto; min-width:9px; height:22px; border:none; border-radius:3px; background:var(--line); cursor:pointer; padding:0; }
+  .rail button.st-completa{background:var(--teal);}
+  .rail button.st-progreso{background:var(--amber);}
+  .rail button:hover{ filter:brightness(0.9); }
+  .rail-labels{ display:flex; justify-content:space-between; font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); margin-top:4px; }
+
+  .toolbar{ max-width:var(--maxw); margin:0 auto; padding:0 20px 16px; display:flex; gap:10px; align-items:center; font-size:0.8rem; color:var(--muted); flex-wrap:wrap; }
+  .toolbar button{ font-family:"IBM Plex Mono"; font-size:0.72rem; background:var(--panel); color:var(--ink-soft); border:1px solid var(--line); border-radius:6px; padding:5px 10px; cursor:pointer; }
+  .toolbar button:hover{ border-color:var(--line-strong); }
+  #saveStatus{ font-family:"IBM Plex Mono"; font-size:0.7rem; color:var(--muted); margin-left:auto; }
+
+  main{ max-width:var(--maxw); margin:0 auto; padding: 8px 20px 100px; }
+  .etapa{ position:relative; margin-top:38px; }
+  .etapa-head{ display:flex; gap:12px; align-items:baseline; margin-bottom:14px; }
+  .etapa-num{ font-family:"IBM Plex Mono"; color:var(--muted); font-size:0.78rem; padding-top:2px; }
+  .etapa-head h2{ font-size:1.05rem; }
+  .etapa-desc{ color:var(--muted); font-size:0.86rem; margin:2px 0 0 0; }
+  .etapa-range{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); white-space:nowrap; padding-top:2px; }
+
+  .timeline{ position:relative; padding-left:34px; border-left:2px solid var(--line); }
+  details.phase{ position:relative; margin-bottom:10px; }
+  details.phase::before{ content:""; position:absolute; left:-41px; top:14px; width:14px; height:14px; border-radius:50%; background:var(--paper); border:2px solid var(--line-strong); }
+  details.phase.st-completa::before{ background:var(--teal); border-color:var(--teal); }
+  details.phase.st-progreso::before{ background:var(--amber); border-color:var(--amber); }
+  details.phase[open]::before{ outline:2px solid var(--line-strong); outline-offset:2px; }
+
+  summary.phase-sum{ list-style:none; cursor:pointer; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; display:flex; align-items:flex-start; gap:12px; }
+  summary.phase-sum::-webkit-details-marker{ display:none; }
+  details[open] > summary.phase-sum{ border-color:var(--line-strong); border-bottom-left-radius:0; border-bottom-right-radius:0; }
+  .chev{ font-family:"IBM Plex Mono"; color:var(--muted); transition: transform .18s ease; padding-top:3px; flex:none; }
+  details[open] .chev{ transform:rotate(90deg); }
+  .sum-num{ font-family:"IBM Plex Mono"; font-weight:500; color:var(--muted); flex:none; padding-top:2px; min-width:26px; }
+  .sum-body{ flex:1; min-width:0; }
+  .sum-title-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .sum-title-row h3{ font-size:0.98rem; }
+  .status-pill{ font-family:"IBM Plex Mono"; font-size:0.65rem; border-radius:999px; padding:3px 10px; border:1px solid var(--line); color:var(--muted); white-space:nowrap; background:var(--paper); cursor:pointer; }
+  .status-pill.st-progreso{ background:var(--amber-soft); color:var(--amber); border-color:var(--amber); }
+  .status-pill.st-completa{ background:var(--teal-soft); color:var(--teal); border-color:var(--teal); }
+  .sum-resumen{ margin:4px 0 0 0; color:var(--muted); font-size:0.86rem; }
+
+  .phase-body{ background:var(--paper); border:1px solid var(--line-strong); border-top:none; border-bottom-left-radius:var(--radius); border-bottom-right-radius:var(--radius); padding:16px 16px 14px; }
+  .phase-body p{ margin:0 0 12px 0; color:var(--ink-soft); }
+  .grp{ margin-bottom:14px; } .grp:last-child{ margin-bottom:0; }
+  .grp-h{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); margin:0 0 6px 0; }
+  .grp ul{ margin:0; padding-left:0; list-style:none; display:grid; gap:6px; }
+  .grp li{ font-size:0.9rem; color:var(--ink); padding-left:14px; position:relative; }
+  .grp li::before{ content:"–"; position:absolute; left:0; color:var(--muted); }
+  .grp.neg li::before{ content:"×"; color:var(--red); }
+  .grp.neg li{ color:var(--ink-soft); }
+
+  pre.diagram{ background:var(--code-bg); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:"IBM Plex Mono"; font-size:0.8rem; line-height:1.55; color:var(--ink-soft); margin:0 0 14px 0; }
+
+  .gate{ display:flex; gap:10px; background:var(--amber-soft); border-left:3px solid var(--amber); border-radius:6px; padding:10px 12px; margin:14px 0 0 0; }
+  .gate .g-label{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--amber); flex:none; padding-top:1px; }
+  .gate p{ margin:0; color:var(--ink); font-size:0.9rem; }
+
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .chat-tag{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--ink-soft); background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:4px 9px; }
+  .ref-tag{ font-family:"IBM Plex Mono"; font-size:0.66rem; color:var(--muted); margin-left:auto; }
+
+  .nota-box{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); }
+  .nota-label{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); display:block; margin-bottom:6px; }
+  .nota-row{ display:flex; gap:8px; }
+  .nota-row input{ flex:1; font-family:"IBM Plex Sans"; font-size:0.86rem; padding:7px 10px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); }
+  .nota-row button{ font-family:"IBM Plex Mono"; font-size:0.72rem; background:var(--panel); color:var(--ink-soft); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+  .nota-row button:hover{ border-color:var(--line-strong); }
+  .nota-saved{ font-family:"IBM Plex Mono"; font-size:0.66rem; color:var(--muted); margin:0 0 0 0; padding-left:2px; }
+
+  .next-marker{ position:relative; margin: 6px 0 20px; padding-left:2px; font-family:"IBM Plex Mono"; font-size:0.75rem; color:var(--muted); }
+  .next-marker::before{ content:""; position:absolute; left:-41px; top:8px; width:14px; height:14px; border-radius:50%; background:var(--paper); border:2px dashed var(--line-strong); }
+
+  footer{ max-width:var(--maxw); margin:0 auto; padding:20px 20px 60px; color:var(--muted); font-size:0.8rem; border-top:1px solid var(--line); }
+
+  .totop{ position:fixed; right:18px; bottom: calc(18px + env(safe-area-inset-bottom,0px)); width:38px; height:38px; border-radius:50%; border:1px solid var(--line-strong); background:var(--panel); color:var(--ink-soft); font-family:"IBM Plex Mono"; cursor:pointer; display:none; align-items:center; justify-content:center; z-index:30; box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .totop.show{ display:flex; }
+
+  @media (max-width:560px){
+    .brand-row{ flex-direction:column; } .stack-meta{ text-align:left; }
+    .timeline{ padding-left:26px; }
+    details.phase::before{ left:-33px; width:12px; height:12px; }
+    .next-marker::before{ left:-33px; width:12px; height:12px; }
+    body{ font-size:15px; }
+    #saveStatus{ margin-left:0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand-row">
+      <h1>Roadmap maestro<span class="sub">F-Lex → producto vendible</span></h1>
+      <div class="stack-meta">React · TypeScript · Vite<br>Cloudflare Workers + D1 + R2<br>HEAD bbe707a</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar" id="progressBar"></div>
+      <span class="progress-txt" id="progressTxt"></span>
+    </div>
+    <div class="updated-txt" id="updatedTxt"></div>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="rail"></div>
+    <div class="rail-labels"><span>Fase 0</span><span>Fase 29</span></div>
+  </div>
+  <div class="toolbar">
+    <button id="expandAll">Expandir todo</button>
+    <button id="collapseAll">Colapsar todo</button>
+    <button id="downloadBtn">Descargar HTML actualizado</button>
+    <span id="saveStatus"></span>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  Tablero de seguimiento de F-Lex. Si este archivo corre en el artefacto de Claude, los cambios se guardan solos al hacer clic. Si corre fuera de ahí (por ejemplo en GitHub Pages), el estado se guarda en este navegador y usa "Descargar HTML actualizado" para llevar el cambio a tu repositorio.
+</footer>
+
+<button class="totop" id="totop" aria-label="Subir">↑</button>
+
+<script>
+function appMain(){
+
+const ETAPAS = [
+  { id:1, nombre:"Fundamentos técnicos", rango:"Fases 0–2", desc:"Confirmar qué heredamos y qué comportamiento no se puede romper.", fases:[0,1,2] },
+  { id:2, nombre:"Seguridad y datos", rango:"Fases 3–6", desc:"Diseñar identidad, tenants y permisos antes de tocar lógica de negocio.", fases:[3,4,5,6] },
+  { id:3, nombre:"Infraestructura", rango:"Fases 7–8", desc:"Salir de localhost con ambientes reales y restauración probada.", fases:[7,8] },
+  { id:4, nombre:"Ingesta y automatización", rango:"Fases 9–12", desc:"Profesionalizar el monitoreo judicial y avisar cuando algo cambia.", fases:[9,10,11,12] },
+  { id:5, nombre:"Producto y cumplimiento", rango:"Fases 13–14", desc:"De herramienta personal a producto que otro litigante puede usar, con el gate legal cerrado.", fases:[13,14] },
+  { id:6, nombre:"Validación comercial", rango:"Fases 15–19", desc:"Definir qué se vende, probarlo con externos y cobrar sin sobreconstruir.", fases:[15,16,17,18,19] },
+  { id:7, nombre:"Billing", rango:"Fases 20–25", desc:"Construir el dominio de suscripciones sin que el proveedor de pagos sea la fuente de verdad.", fases:[20,21,22,23,24,25] },
+  { id:8, nombre:"Lanzamiento", rango:"Fases 26–29", desc:"Endurecer producción, correr el release candidate y crecer con soporte cercano.", fases:[26,27,28,29] },
+];
+
+const FASES = {
+0:{ titulo:"Estado actual", resumen:"Repo heredado inspeccionado: qué funciona y qué falta antes de tocar código.",
+  objetivo:"Estamos aquí.",
+  grupos:[
+    {h:"Tenemos", items:["Repo clonado, rama main, HEAD bbe707a, working tree limpio","Arquitectura inspeccionada y producto funcional heredado","React / TypeScript / Vinext / Vite","Workers + D1 + R2 previstos","Parsers SISE, sesiones judiciales, documentos/OCR","Revisión diaria, relaciones entre asuntos, exportación","CI existente"]},
+    {h:"Pero todavía", neg:true, items:["Auth cerrada","No hay users / orgs / roles","No hay tenant isolation probado","No hay scheduler","No hay staging ni producción","No hay billing","Tests funcionales insuficientes"]},
+  ],
+  nota:"La auditoría confirmó que las pruebas actuales son solo dos suites limitadas: no sustituyen integración real con sesión + D1 + R2.",
+  ref:"HANDOFF"
+},
+1:{ titulo:"Baseline reproducible", resumen:"Confirmar que el código heredado compila y pasa sus verificaciones tal cual, sin modificarlo.",
+  objetivo:'Demostrar: "El código que recibimos compila y pasa sus verificaciones en nuestra máquina, sin modificarlo."',
+  diagrama:"pnpm install --frozen-lockfile\n  ↓\npnpm check:privacy\n  ↓\npnpm typecheck\n  ↓\npnpm test\n  ↓\npnpm build",
+  grupos:[ {h:"Registrar", items:["Versión de Node y pnpm","Resultado y tiempo de cada paso","Warnings","Archivos generados","git status"]} ],
+  gate:"Todo pasa, o conocemos exactamente qué falla.",
+  chat:"F-LEX — QA / BASELINE / ENGINEERING HEALTH",
+  nota:"La auditoría de Codex ya identificó este como el siguiente milestone correcto.",
+  ref:"Texto pegado"
+},
+2:{ titulo:"Golden dataset + regression harness", resumen:"Fijar en fixtures el comportamiento funcional que no se puede romper al arreglar el software.",
+  objetivo:"Crítico: no queremos arreglar el software rompiendo justamente lo que hace valioso al producto.",
+  grupos:[
+    {h:"Fixtures sintéticos", items:["Expediente válido","Sin novedades","Nueva publicación","Portal caído","HTML cambiado","Respuesta parcial","Duplicados","Sesiones y relaciones","Suspensión","Errores, PDF, OCR, documentos"]},
+    {h:"Pruebas sobre", items:["lib/sise.ts","lib/case-info.ts","lib/sessions.ts","Relaciones y novedades","Edición y documentos","Persistence"]},
+  ],
+  nota:"La matriz técnica ya exige casos como primera consulta, portal caído, relacionados ambiguos, OCR parcial, eliminación interrumpida R2/D1 y restauración.",
+  gate:'Podemos decir: "Éste es el comportamiento funcional que no debemos romper."',
+  chat:"QA", ref:"PLAYBOOK"
+},
+3:{ titulo:"Security + IAM architecture", resumen:"Diseñar identidad, organizaciones y permisos. Todavía no es el login bonito.",
+  objetivo:"Primero diseño, todavía no login bonito.",
+  grupos:[ {h:"Resolver", items:["User, organization, membership","Role, permission, resource ownership","Superadmin, session"]} ],
+  diagrama:"PLATFORM\n└── SUPERADMIN\n\nORGANIZATION\n├── OWNER\n├── ADMIN\n└── MEMBER",
+  nota:"Esta jerarquía todavía debe validarse, no congelarse arbitrariamente.",
+  grupos2:[
+    {h:"Elegir identity provider", items:["Comparar opciones antes de implementar"]},
+    {h:"Threat model", items:["IDOR / BOLA","Tenant breakout","Privilege escalation","Session hijacking","CSRF","Document access","Exports","Superadmin abuse"]},
+  ],
+},
+4:{ titulo:"Data model multi-tenant", resumen:"Una vez aprobado IAM: los recursos existentes dejan de depender de un owner ambiguo.",
+  objetivo:"Una vez aprobado IAM, definir el schema mínimo.",
+  diagrama:"users\norganizations\norganization_memberships\n\ntracked_cases\nrelated_links\ndaily_reviews\ncase_documents",
+  grupos:[ {h:"También", items:["Foreign keys donde correspondan","Unique constraints","Cascade / restrict deliberados","Índices, timestamps, lifecycle"]} ],
+  nota:"Importante: SECURITY diseña permisos, DATA implementa integridad. Uno no debe inventar al otro.",
+  chat:"F-LEX — DATA / DATABASE"
+},
+5:{ titulo:"Authentication + authorization real", resumen:"Implementación real de auth, con la matriz de aislamiento entre cuentas como prueba decisiva.",
+  objetivo:"Ahora sí implementamos.",
+  grupos:[ {h:"Implementamos", items:["Signup / invite, login, session, logout","Expiration, revocation","Password recovery / provider recovery","Organization membership, RBAC","Route guards, API authorization"]} ],
+  diagrama:"Usuario A → expediente A   ✅\nUsuario A → expediente B   ❌\n\nUsuario A → documento A    ✅\nUsuario A → documento B    ❌\n\nUsuario A → export A       ✅\nUsuario A → export B       ❌",
+  grupos2:[ {h:"También", items:["Forged headers → ❌","Owner manipulado → ❌","Sesión vencida → ❌","Logout → revocación","CSRF → bloqueado"]} ],
+  nota:"El playbook ya define prácticamente esta matriz de aceptación.",
+  gate:"Dos cuentas sintéticas aisladas completamente.", ref:"PLAYBOOK"
+},
+6:{ titulo:"Backend hardening P0", resumen:"Antes de abrir F-Lex a usuarios reales, cerrar los huecos de robustez P0.",
+  objetivo:"Antes de abrir F-Lex a usuarios.",
+  grupos:[ {h:"Cerrar", items:["Límites de payload","Errores consistentes","Rate limiting interno","CSRF completo","Validación, SSRF / source allowlist","Timeouts y concurrencia","Edición segura","Document / export authorization","Input validation","Eliminación coherente","Reconciliación R2/D1"]} ],
+  nota:'Especial atención a "save": la documentación advierte que puede reconstruir CaseData y debe comprobarse que no pierda metadata.',
+  chat:"BACKEND + SECURITY según subproblema", ref:"HANDOFF"
+},
+7:{ titulo:"Staging real", resumen:"Por primera vez dejamos localhost: DEV, STAGING y PROD separados en Cloudflare.",
+  objetivo:"Por primera vez dejamos localhost.",
+  grupos:[
+    {h:"Crear", items:["F-LEX DEV","F-LEX STAGING","F-LEX PROD (separados)"]},
+    {h:"Para Cloudflare", items:["Workers","D1 staging","R2 staging","Secrets staging","Identity callbacks staging"]},
+    {h:"Después", items:["Migraciones desde cero","Usuarios sintéticos","Bucket privado, HTTPS","Source connectivity, logs","Smoke tests"]},
+  ],
+  nota:"El playbook exige recursos separados, secretos fuera de Git, bucket privado y configuración reproducible por ambiente.",
+  gate:"Staging limpio, reproducible desde cero."
+},
+8:{ titulo:"Backups + restore", resumen:"Un SaaS jurídico sin restore probado no está listo.",
+  objetivo:"Esto no es sexy, pero es indispensable.",
+  grupos:[
+    {h:"Necesitamos", items:["D1 backup","R2 backup","Manifest","Schema version","Restore procedure"]},
+    {h:"Acción", items:["Destruir un ambiente de prueba y reconstruirlo"]},
+  ],
+  nota:"El playbook exige ensayar la restauración y verificar owners, conteos, relaciones, documentos y controles de acceso.",
+  gate:'Restauración probada. No basta con "Cloudflare hace backups".'
+},
+9:{ titulo:"Judicial ingestion hardening", resumen:"Profesionalizar la pieza que realmente alimenta a F-Lex.",
+  objetivo:"Ahora profesionalizamos la pieza que realmente alimenta F-Lex.",
+  diagrama:"PJF → FETCH → VALIDATE → PARSE → NORMALIZE → COMPARE → PERSIST",
+  grupos:[ {h:"Añadimos", items:["Parser versioning","Fingerprint de estructura","Timeout, retry, exponential backoff","Rate limit, health, métricas","last_attempt, last_success","Error classification"]} ],
+  nota:"Regla que ya cumple el producto y debe preservarse: SOURCE ERROR ≠ NO NEWS.",
+  chat:"F-LEX — JUDICIAL INGESTION"
+},
+10:{ titulo:"Scheduler / monitoreo autónomo", resumen:'El salto de "herramienta que consulta" a "servicio que vigila por mí". Hoy no existe scheduler.',
+  objetivo:"Éste es el salto que convierte a F-Lex en un servicio que vigila por mí.",
+  diagrama:"scheduler → job → queue → fetch → parse → compare → persist → novelty → notification",
+  grupos:[ {h:"Con", items:["Límites de concurrencia","Retry, deduplicación, locks","Idempotencia, horarios, backoff","Fallo parcial","Ownership del job"]} ],
+  nota:"El playbook exige expresamente que cualquier scheduler opere con propietario autorizado, límites, retries y distinga último intento de último éxito.",
+  gate:"Cerrar el navegador, esperar, abrir después: los movimientos ya fueron procesados.",
+  ref:"Texto pegado (1)"
+},
+11:{ titulo:"Observabilidad", resumen:"Saber cuándo algo dejó de funcionar antes de que llame un abogado.",
+  objetivo:"Ahora debemos saber cuándo algo dejó de funcionar antes de que nos llame un abogado.",
+  grupos:[ {h:"Métricas", items:["Fetch success %, parser success %","Source failures, latency","Job duration, queue backlog","Novelties detected, failed jobs","Retry rate, human intervention rate","last_attempt, last_success, freshness"]} ],
+  nota:'Alerta ejemplo: "SISE parser success cayó de 99.5% a 22%." Eso debe disparar investigación.',
+  chat:"QA / OBSERVABILITY"
+},
+12:{ titulo:"Notificaciones", resumen:"El usuario no debe vivir mirando el dashboard.",
+  objetivo:"El usuario no debe vivir mirando el dashboard.",
+  grupos:[
+    {h:"Primero", items:["Email","In-app notifications"]},
+    {h:"Después (solo con detección confiable)", items:["Push","WhatsApp","Otros canales"]},
+  ],
+},
+13:{ titulo:"Front / UX productization", resumen:'Convertir el producto de "app que entiende a Adrián" a "app que puede entender a otro litigante".',
+  objetivo:"Hasta aquí no hemos hecho redesign por gusto. Ahora sí.",
+  grupos:[ {h:"Necesitamos", items:["Onboarding, empty states","Agregar expediente, dashboard","Revisión del día, novedades","Estados de fuente, documentos, relaciones","Settings, members, billing, account, logout","Responsive, accessibility, errores claros"]} ],
+  nota:'Eliminar textos falsos/heredados como "tareas programadas pausadas" mientras esa capacidad no exista; el repo ya identifica esa deuda.',
+  chat:"F-LEX — FRONTEND / UX", ref:"HANDOFF"
+},
+14:{ titulo:"Privacy / security / legal release gate", resumen:"Cerrar el gate legal y de seguridad antes de meter clientes reales.",
+  objetivo:"Antes de meter clientes reales.",
+  grupos:[
+    {h:"Legal", items:["Aviso de privacidad, términos","Tratamiento de documentos","Políticas de retención y eliminación","Proveedores / subprocesadores","Incidentes, responsabilidades, soporte","Disclaimers y autorizaciones contractuales"]},
+    {h:"Además", items:["Threat model cerrado","Security review, secrets review","Access review, dependency review","Backup test"]},
+  ],
+  nota:"Objetivo: ISO 27001/27701-ready, sin fingir certificación."
+},
+15:{ titulo:"Product thesis + pilot package", resumen:'Congelar el primer producto vendible. No "todo para abogados".',
+  objetivo:"Aquí congelamos el primer producto vendible.",
+  grupos:[
+    {h:'Ejemplo conceptual: "F-Lex Federal"', items:["Para litigantes con cartera activa de asuntos federales"]},
+    {h:"Definir exactamente", items:["Qué incluye y qué no incluye","Número de usuarios y de expedientes","Frecuencia de monitoreo","Documentos, soporte","SLA / no SLA inicial"]},
+  ],
+},
+16:{ titulo:"Piloto externo de 5 usuarios", resumen:"Comprobar que el producto no solo le sirve al fundador. Sin cobro masivo todavía.",
+  objetivo:"No cobro masivo todavía. Invitamos a unos 5 litigantes externos.",
+  grupos:[ {h:"Medimos", items:["Time-to-first-value","Expedientes cargados, consultas","Movimientos detectados, errores","Horas ahorradas","Intervención humana, uso semanal"]} ],
+  nota:"La tesis original dice que la siguiente validación es reproducibilidad, y luego pago/retención.",
+  ref:"Texto pegado"
+},
+17:{ titulo:"Pricing discovery", resumen:"No inventar el precio porque suena bonito: partir de horas eliminadas.",
+  objetivo:"Aquí no inventamos $499 porque suena bonito.",
+  diagrama:"horas humanas antes − horas humanas después = horas eliminadas",
+  grupos:[
+    {h:"Más", items:["Volumen de expedientes, usuarios","Costo de infraestructura, soporte","Willingness to pay, benchmarks"]},
+    {h:"Elegir modelo", items:["Por despacho + expedientes incluidos","Por usuario + expedientes","Híbrido"]},
+  ],
+},
+18:{ titulo:"Primer cobro, sin sobreconstruir billing", resumen:"Demostrar que alguien realmente entrega dinero, antes de programar billing completo.",
+  objetivo:"Antes de programar una plataforma completa de billing, demostrar que alguien realmente entrega dinero.",
+  grupos:[ {h:"Opciones", items:["A — Stripe Payment Link","B — Mercado Pago: plan de suscripción / link"]} ],
+  nota:"Mercado Pago ya permite en México crear planes de suscripción recurrentes y compartir un enlace sin desarrollar toda la integración. Stripe también permite Payment Links y suscripciones sin construir el checkout completo de inicio.",
+  gate:"Éste es un shortcut correcto: no retrasar la validación comercial tres semanas para desarrollar billing."
+},
+19:{ titulo:"Piloto pagado: 10–20 clientes", resumen:'Buscar la frase decisiva: "pago para seguir sin hacer este trabajo manual".',
+  objetivo:'Ahora queremos la frase decisiva: "Pago para seguir sin hacer este trabajo manual."',
+  grupos:[ {h:"Medir durante 30–60 días", items:["Conversion, activation, retention, churn","Support, source errors, human intervention","MRR, gross margin","Horas ahorradas"]} ],
+},
+20:{ titulo:"Billing domain", resumen:"Construir billing real, sin que el proveedor de pagos sea la base de autorización.",
+  objetivo:"Solo después construimos billing realmente integrado.",
+  diagrama:"organization → subscription → plan → entitlements → billing status → usage / limits",
+  nota:'Importante: el payment provider no debe convertirse en nuestra base de autorización. Que Stripe diga "paid" no significa que todo el código consulte Stripe cada vez. Nuestro dominio mantiene subscription_status, plan, entitlements y limits, actualizados por webhooks.'
+},
+21:{ titulo:"Payment gateway", resumen:"Stripe Checkout + Billing como primera opción; Mercado Pago como alternativa fuerte para México.",
+  objetivo:"Aquí sí integramos pagos dentro de F-Lex.",
+  nota:"Aclaración: Apple Pay no es una pasarela independiente — es un wallet/payment method que normalmente procesa un PSP como Stripe. Apple soporta pagos recurrentes mediante Apple Pay, sin conflicto conceptual con una suscripción SaaS.",
+  grupos:[
+    {h:"Primera opción — Stripe Checkout + Stripe Billing", items:["Suscripciones, checkout alojado","Webhooks, portal del cliente","Renovaciones, retries","Tarjetas, Apple Pay, Google Pay"]},
+    {h:"Alternativa para México — Mercado Pago", items:["API de suscripciones: /preapproval_plan, /preapproval","Cobros recurrentes","Pausa / cancelación / reactivación"]},
+  ],
+  diagrama:"BillingProvider (interfaz)\n       │\n       └── Stripe v1\n\n  →  más adelante:\n\nBillingProvider\n├── Stripe\n└── MercadoPago  (si hay razón comercial)",
+  nota2:"Diseño: evitar meter lógica de Stripe repartida por toda la aplicación."
+},
+22:{ titulo:"Billing lifecycle", resumen:"Definir qué le ocurre exactamente a F-Lex en cada estado de la suscripción.",
+  objetivo:'Hay bastante más que un botón "Pagar".',
+  grupos:[
+    {h:"Estados", items:["trialing","active","past_due","canceled","paused","expired"]},
+    {h:"Eventos", items:["checkout completed","payment succeeded / failed","subscription updated / canceled","refund, chargeback"]},
+  ],
+  diagrama:"PAST_DUE          → grace period\nCANCELED          → read-only temporal\nRETENTION EXPIRES → eliminación conforme a política"
+},
+23:{ titulo:"Entitlements / plan limits", resumen:"Los planes empiezan a tener significado técnico. Los números los define Pricing, no Backend.",
+  objetivo:"Ahora los planes empiezan a tener significado técnico.",
+  grupos:[
+    {h:"Ejemplo (solamente ejemplo)", items:["Starter — 50 expedientes","Pro — 250 expedientes","Team — X usuarios / Y expedientes"]},
+    {h:"Backend implementa", items:["max_cases, max_members","monitoring_frequency","document_limits, features"]},
+  ],
+},
+24:{ titulo:"Customer self-service", resumen:"El cliente resuelve plan, pago y cancelación sin pasar por nosotros.",
+  objetivo:"El cliente debe poder autoservirse.",
+  grupos:[ {h:"El cliente debe poder", items:["Ver su plan","Cambiar medio de pago","Descargar recibos","Cancelar o cambiar de plan","Ver sus límites"]} ],
+  nota:"Stripe Billing incluye un customer portal alojado, lo cual puede ahorrar bastante desarrollo inicial."
+},
+25:{ titulo:"Facturación / operación financiera", resumen:"Separado de cobrar la tarjeta: la parte fiscal y contable mexicana.",
+  objetivo:"Separado de cobrar tarjeta.",
+  grupos:[ {h:"Hay que resolver", items:["Quién vende F-Lex, RFC / entidad","Facturación mexicana, IVA","Conciliación, devoluciones, notas","Contabilidad, soporte"]} ],
+  nota:"No conviene mezclar esto con billing.ts."
+},
+26:{ titulo:"Production hardening", resumen:"Preparar de verdad el dominio de producción antes de conectarlo.",
+  objetivo:"Ahora preparamos realmente app.f-lex... o el dominio que se decida.",
+  grupos:[ {h:"Checklist", items:["Production DB, production R2","Secrets, auth callbacks, HTTPS","Migrations, backups, restore","Alerts, rate limiting","CSP / security headers, logs","Support, status page si corresponde"]} ],
+  nota:"El playbook ya exige CI aprobada, aislamiento, CSRF, recursos de producción separados, restore ensayado y logs seguros antes de conectar el dominio."
+},
+27:{ titulo:"Release candidate", resumen:"v1.0.0-rc.1: correr el flujo completo end-to-end, incluyendo los casos de falla.",
+  objetivo:"Creamos v1.0.0-rc.1.",
+  diagrama:"signup → organization → subscribe → login → add case → monitor\n→ detect novelty → review → document → notification\n→ logout → login → billing → cancel",
+  grupos:[ {h:"Más", items:["Portal down","Payment failed","Session expired","User removed","Tenant A ataca a tenant B","Restore"]} ],
+},
+28:{ titulo:"Soft launch", resumen:"Sin campaña masiva: 10 → 20 → 50 clientes, con soporte cercano.",
+  objetivo:"No hacemos campaña masiva.",
+  diagrama:"10 → 20 → 50 clientes",
+  grupos:[ {h:"Medimos especialmente", items:["Reliability, parser errors","Customer support","Activation, churn","MRR, cost/customer"]} ],
+},
+29:{ titulo:"Producto vendible", resumen:"El flujo completo, sin intervención manual para dar de alta a un cliente. Eso es F-Lex como SaaS.",
+  objetivo:"Aquí sí podemos decir que tenemos el flujo completo.",
+  diagrama:"LANDING\n  ↓\nSIGN UP\n  ↓\nCHECKOUT\n  ↓\nPAYMENT / APPLE PAY / CARD\n  ↓\nORGANIZATION\n  ↓\nONBOARDING\n  ↓\nADD CASE\n  ↓\nAUTOMATIC MONITORING\n  ↓\nNOVELTY → CONTEXT → NOTIFICATION\n  ↓\nDAILY REVIEW\n  ↓\nRENEWAL",
+  nota:"Sin intervención nuestra para dar de alta manualmente al cliente. Eso es F-Lex como SaaS."
+},
+};
+
+const STATUS_CYCLE = ["pendiente","progreso","completa"];
+const STATUS_LABEL = {pendiente:"pendiente", progreso:"en curso", completa:"completada"};
+
+function esc(s){ const d=document.createElement("div"); d.textContent = s==null?"":String(s); return d.innerHTML; }
+
+function nextStatus(s){
+  const i = STATUS_CYCLE.indexOf(s);
+  return STATUS_CYCLE[(i+1) % STATUS_CYCLE.length];
+}
+
+function renderGrupo(g){
+  const cls = g.neg ? "grp neg" : "grp";
+  const items = g.items.map(function(i){ return "<li>"+esc(i)+"</li>"; }).join("");
+  return '<div class="'+cls+'">'+(g.h?'<p class="grp-h">'+esc(g.h)+"</p>":"")+"<ul>"+items+"</ul></div>";
+}
+
+function renderPhase(n, st){
+  const f = FASES[n];
+  const status = st.status || "pendiente";
+  let body = "";
+  if(f.objetivo && f.objetivo.trim() !== f.resumen.trim()) body += "<p>"+esc(f.objetivo)+"</p>";
+  if(f.grupos && f.grupos.length) body += f.grupos.map(renderGrupo).join("");
+  if(f.diagrama) body += '<pre class="diagram">'+esc(f.diagrama)+"</pre>";
+  if(f.grupos2 && f.grupos2.length) body += f.grupos2.map(renderGrupo).join("");
+  if(f.nota) body += '<p style="font-size:0.86rem;">'+esc(f.nota)+"</p>";
+  if(f.nota2) body += '<p style="font-size:0.86rem;">'+esc(f.nota2)+"</p>";
+  if(f.gate) body += '<div class="gate"><span class="g-label">GATE</span><p>'+esc(f.gate)+"</p></div>";
+
+  const footBits = [];
+  if(f.chat) footBits.push('<span class="chat-tag">Chat: '+esc(f.chat)+"</span>");
+  if(f.ref) footBits.push('<span class="ref-tag">Fuente: '+esc(f.ref)+"</span>");
+  if(footBits.length) body += '<div class="foot-row">'+footBits.join("")+"</div>";
+
+  body += '<div class="nota-box"><span class="nota-label">Nota de seguimiento</span>' +
+    '<div class="nota-row">' +
+      '<input type="text" data-nota="'+n+'" value="'+esc(st.nota||"")+'" placeholder="Ej. bloqueado por X, retomar el jueves...">' +
+      '<button data-guardar-nota="'+n+'">Guardar</button>' +
+    "</div></div>";
+
+  return (
+    '<details class="phase st-'+status+'" id="fase-'+n+'" data-n="'+n+'">' +
+      '<summary class="phase-sum">' +
+        '<span class="chev">▸</span>' +
+        '<span class="sum-num">'+String(n).padStart(2,"0")+"</span>" +
+        '<span class="sum-body">' +
+          '<span class="sum-title-row">' +
+            "<h3>"+esc(f.titulo)+"</h3>" +
+            '<button class="status-pill st-'+status+'" data-status-btn="'+n+'">'+STATUS_LABEL[status]+"</button>" +
+          "</span>" +
+          '<p class="sum-resumen">'+esc(f.resumen)+"</p>" +
+        "</span>" +
+      "</summary>" +
+      '<div class="phase-body">'+body+"</div>" +
+    "</details>"
+  );
+}
+
+function computeProgress(state){
+  let completa=0, progreso=0;
+  for(let n=0;n<=29;n++){
+    const s = (state.fases[n]||{}).status || "pendiente";
+    if(s==="completa") completa++;
+    else if(s==="progreso") progreso++;
+  }
+  return {completa, progreso, total:30};
+}
+
+function render(state){
+  const main = document.getElementById("main");
+  let html = "";
+  ETAPAS.forEach(function(et){
+    html += '<section class="etapa" id="etapa-'+et.id+'">' +
+      '<div class="etapa-head">' +
+        '<span class="etapa-num">Etapa '+et.id+"/8</span>" +
+        "<div><h2>"+esc(et.nombre)+"</h2><p class=\"etapa-desc\">"+esc(et.desc)+"</p></div>" +
+        '<span class="etapa-range">'+esc(et.rango)+"</span>" +
+      "</div>" +
+      '<div class="timeline">' +
+        et.fases.map(function(n){ return renderPhase(n, state.fases[n]||{}); }).join("") +
+      "</div>" +
+    "</section>";
+  });
+  main.innerHTML = html;
+
+  const p = computeProgress(state);
+  const bar = document.getElementById("progressBar");
+  const pctDone = (p.completa/p.total*100);
+  const pctProg = (p.progreso/p.total*100);
+  bar.innerHTML = '<div class="seg-done" style="width:'+pctDone+'%"></div><div class="seg-prog" style="width:'+pctProg+'%"></div>';
+  document.getElementById("progressTxt").textContent = p.completa+"/"+p.total+" completadas · "+p.progreso+" en curso";
+  const upd = document.getElementById("updatedTxt");
+  upd.textContent = state.updatedAt ? ("Última actualización: "+new Date(state.updatedAt).toLocaleString("es-MX")) : "Sin cambios registrados todavía";
+
+  const rail = document.getElementById("rail");
+  let railHtml = "";
+  for(let n=0;n<=29;n++){
+    const s = (state.fases[n]||{}).status || "pendiente";
+    railHtml += '<button class="st-'+s+'" data-n="'+n+'" title="Fase '+n+" — "+FASES[n].titulo+" ("+STATUS_LABEL[s]+')"></button>';
+  }
+  rail.innerHTML = railHtml;
+
+  const f0 = document.getElementById("fase-0");
+  if(f0 && !document.getElementById("nextMarker")){
+    const marker = document.createElement("div");
+    marker.className = "next-marker";
+    marker.id = "nextMarker";
+    marker.textContent = "↳ siguiente: Fase 1 — Baseline reproducible";
+    f0.insertAdjacentElement("afterend", marker);
+  }
+}
+
+const PAGE_CSS = `
+  :root{
+    --bg: #E7ECF3; --paper: #F3F6FA; --panel: #FDFEFF;
+    --line: #B9C6D8; --line-strong: #8FA1BA;
+    --ink: #16233A; --ink-soft: #47597A; --muted: #6B7C99;
+    --amber: #B9691E; --amber-soft: #F1E0C8;
+    --teal: #1E7C64; --teal-soft: #D8ECE5;
+    --red: #A73F3A; --code-bg: #EAF0F7;
+    --radius: 10px; --maxw: 860px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0C1320; --paper:#111A2B; --panel:#162135;
+      --line:#2A3B54; --line-strong:#3D5372;
+      --ink:#E7ECF3; --ink-soft:#B7C4D9; --muted:#8090AC;
+      --amber:#E8A34D; --amber-soft:#3A2E1B;
+      --teal:#54D1AE; --teal-soft:#163229;
+      --red:#E2756E; --code-bg:#0E1725;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0C1320; --paper:#111A2B; --panel:#162135;
+    --line:#2A3B54; --line-strong:#3D5372;
+    --ink:#E7ECF3; --ink-soft:#B7C4D9; --muted:#8090AC;
+    --amber:#E8A34D; --amber-soft:#3A2E1B;
+    --teal:#54D1AE; --teal-soft:#163229;
+    --red:#E2756E; --code-bg:#0E1725;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: calc(112px + env(safe-area-inset-top, 0px));}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size:15.5px; line-height:1.55;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:"Space Grotesk"; font-weight:600; letter-spacing:-0.01em; color:var(--ink); margin:0; }
+  code,.mono{ font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  header.top{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px); border-bottom:1px solid var(--line); padding: env(safe-area-inset-top,0px) 0 0 0; }
+  .top-inner{ max-width:var(--maxw); margin:0 auto; padding: 16px 20px 10px; }
+  .brand-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .brand-row h1{ font-size:1.28rem; }
+  .brand-row h1 .sub{ display:block; font-family:"IBM Plex Sans"; font-weight:500; font-size:0.82rem; color:var(--muted); margin-top:2px; }
+  .stack-meta{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); text-align:right; line-height:1.5; white-space:nowrap; }
+
+  .progress-row{ display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .progress-bar{ flex:1; height:7px; background:var(--line); border-radius:99px; overflow:hidden; display:flex; }
+  .progress-bar .seg-done{ background:var(--teal); height:100%; }
+  .progress-bar .seg-prog{ background:var(--amber); height:100%; }
+  .progress-txt{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+  .updated-txt{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); margin-top:4px; }
+
+  .rail-wrap{ max-width:var(--maxw); margin:0 auto; padding: 10px 20px 10px; }
+  .rail{ display:flex; gap:3px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  .rail::-webkit-scrollbar{display:none;}
+  .rail button{ flex:1 0 auto; min-width:9px; height:22px; border:none; border-radius:3px; background:var(--line); cursor:pointer; padding:0; }
+  .rail button.st-completa{background:var(--teal);}
+  .rail button.st-progreso{background:var(--amber);}
+  .rail button:hover{ filter:brightness(0.9); }
+  .rail-labels{ display:flex; justify-content:space-between; font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); margin-top:4px; }
+
+  .toolbar{ max-width:var(--maxw); margin:0 auto; padding:0 20px 16px; display:flex; gap:10px; align-items:center; font-size:0.8rem; color:var(--muted); flex-wrap:wrap; }
+  .toolbar button{ font-family:"IBM Plex Mono"; font-size:0.72rem; background:var(--panel); color:var(--ink-soft); border:1px solid var(--line); border-radius:6px; padding:5px 10px; cursor:pointer; }
+  .toolbar button:hover{ border-color:var(--line-strong); }
+  #saveStatus{ font-family:"IBM Plex Mono"; font-size:0.7rem; color:var(--muted); margin-left:auto; }
+
+  main{ max-width:var(--maxw); margin:0 auto; padding: 8px 20px 100px; }
+  .etapa{ position:relative; margin-top:38px; }
+  .etapa-head{ display:flex; gap:12px; align-items:baseline; margin-bottom:14px; }
+  .etapa-num{ font-family:"IBM Plex Mono"; color:var(--muted); font-size:0.78rem; padding-top:2px; }
+  .etapa-head h2{ font-size:1.05rem; }
+  .etapa-desc{ color:var(--muted); font-size:0.86rem; margin:2px 0 0 0; }
+  .etapa-range{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); white-space:nowrap; padding-top:2px; }
+
+  .timeline{ position:relative; padding-left:34px; border-left:2px solid var(--line); }
+  details.phase{ position:relative; margin-bottom:10px; }
+  details.phase::before{ content:""; position:absolute; left:-41px; top:14px; width:14px; height:14px; border-radius:50%; background:var(--paper); border:2px solid var(--line-strong); }
+  details.phase.st-completa::before{ background:var(--teal); border-color:var(--teal); }
+  details.phase.st-progreso::before{ background:var(--amber); border-color:var(--amber); }
+  details.phase[open]::before{ outline:2px solid var(--line-strong); outline-offset:2px; }
+
+  summary.phase-sum{ list-style:none; cursor:pointer; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; display:flex; align-items:flex-start; gap:12px; }
+  summary.phase-sum::-webkit-details-marker{ display:none; }
+  details[open] > summary.phase-sum{ border-color:var(--line-strong); border-bottom-left-radius:0; border-bottom-right-radius:0; }
+  .chev{ font-family:"IBM Plex Mono"; color:var(--muted); transition: transform .18s ease; padding-top:3px; flex:none; }
+  details[open] .chev{ transform:rotate(90deg); }
+  .sum-num{ font-family:"IBM Plex Mono"; font-weight:500; color:var(--muted); flex:none; padding-top:2px; min-width:26px; }
+  .sum-body{ flex:1; min-width:0; }
+  .sum-title-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .sum-title-row h3{ font-size:0.98rem; }
+  .status-pill{ font-family:"IBM Plex Mono"; font-size:0.65rem; border-radius:999px; padding:3px 10px; border:1px solid var(--line); color:var(--muted); white-space:nowrap; background:var(--paper); cursor:pointer; }
+  .status-pill.st-progreso{ background:var(--amber-soft); color:var(--amber); border-color:var(--amber); }
+  .status-pill.st-completa{ background:var(--teal-soft); color:var(--teal); border-color:var(--teal); }
+  .sum-resumen{ margin:4px 0 0 0; color:var(--muted); font-size:0.86rem; }
+
+  .phase-body{ background:var(--paper); border:1px solid var(--line-strong); border-top:none; border-bottom-left-radius:var(--radius); border-bottom-right-radius:var(--radius); padding:16px 16px 14px; }
+  .phase-body p{ margin:0 0 12px 0; color:var(--ink-soft); }
+  .grp{ margin-bottom:14px; } .grp:last-child{ margin-bottom:0; }
+  .grp-h{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--muted); margin:0 0 6px 0; }
+  .grp ul{ margin:0; padding-left:0; list-style:none; display:grid; gap:6px; }
+  .grp li{ font-size:0.9rem; color:var(--ink); padding-left:14px; position:relative; }
+  .grp li::before{ content:"–"; position:absolute; left:0; color:var(--muted); }
+  .grp.neg li::before{ content:"×"; color:var(--red); }
+  .grp.neg li{ color:var(--ink-soft); }
+
+  pre.diagram{ background:var(--code-bg); border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:"IBM Plex Mono"; font-size:0.8rem; line-height:1.55; color:var(--ink-soft); margin:0 0 14px 0; }
+
+  .gate{ display:flex; gap:10px; background:var(--amber-soft); border-left:3px solid var(--amber); border-radius:6px; padding:10px 12px; margin:14px 0 0 0; }
+  .gate .g-label{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--amber); flex:none; padding-top:1px; }
+  .gate p{ margin:0; color:var(--ink); font-size:0.9rem; }
+
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .chat-tag{ font-family:"IBM Plex Mono"; font-size:0.72rem; color:var(--ink-soft); background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:4px 9px; }
+  .ref-tag{ font-family:"IBM Plex Mono"; font-size:0.66rem; color:var(--muted); margin-left:auto; }
+
+  .nota-box{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); }
+  .nota-label{ font-family:"IBM Plex Mono"; font-size:0.68rem; color:var(--muted); display:block; margin-bottom:6px; }
+  .nota-row{ display:flex; gap:8px; }
+  .nota-row input{ flex:1; font-family:"IBM Plex Sans"; font-size:0.86rem; padding:7px 10px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); }
+  .nota-row button{ font-family:"IBM Plex Mono"; font-size:0.72rem; background:var(--panel); color:var(--ink-soft); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+  .nota-row button:hover{ border-color:var(--line-strong); }
+  .nota-saved{ font-family:"IBM Plex Mono"; font-size:0.66rem; color:var(--muted); margin:0 0 0 0; padding-left:2px; }
+
+  .next-marker{ position:relative; margin: 6px 0 20px; padding-left:2px; font-family:"IBM Plex Mono"; font-size:0.75rem; color:var(--muted); }
+  .next-marker::before{ content:""; position:absolute; left:-41px; top:8px; width:14px; height:14px; border-radius:50%; background:var(--paper); border:2px dashed var(--line-strong); }
+
+  footer{ max-width:var(--maxw); margin:0 auto; padding:20px 20px 60px; color:var(--muted); font-size:0.8rem; border-top:1px solid var(--line); }
+
+  .totop{ position:fixed; right:18px; bottom: calc(18px + env(safe-area-inset-bottom,0px)); width:38px; height:38px; border-radius:50%; border:1px solid var(--line-strong); background:var(--panel); color:var(--ink-soft); font-family:"IBM Plex Mono"; cursor:pointer; display:none; align-items:center; justify-content:center; z-index:30; box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .totop.show{ display:flex; }
+
+  @media (max-width:560px){
+    .brand-row{ flex-direction:column; } .stack-meta{ text-align:left; }
+    .timeline{ padding-left:26px; }
+    details.phase::before{ left:-33px; width:12px; height:12px; }
+    .next-marker::before{ left:-33px; width:12px; height:12px; }
+    body{ font-size:15px; }
+    #saveStatus{ margin-left:0; }
+  }
+`;
+
+const PAGE_BODY_SHELL = `<header class="top">
+  <div class="top-inner">
+    <div class="brand-row">
+      <h1>Roadmap maestro<span class="sub">F-Lex → producto vendible</span></h1>
+      <div class="stack-meta">React · TypeScript · Vite<br>Cloudflare Workers + D1 + R2<br>HEAD bbe707a</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar" id="progressBar"></div>
+      <span class="progress-txt" id="progressTxt"></span>
+    </div>
+    <div class="updated-txt" id="updatedTxt"></div>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="rail"></div>
+    <div class="rail-labels"><span>Fase 0</span><span>Fase 29</span></div>
+  </div>
+  <div class="toolbar">
+    <button id="expandAll">Expandir todo</button>
+    <button id="collapseAll">Colapsar todo</button>
+    <button id="downloadBtn">Descargar HTML actualizado</button>
+    <span id="saveStatus"></span>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  Tablero de seguimiento de F-Lex. Si este archivo corre en el artefacto de Claude, los cambios se guardan solos al hacer clic. Si corre fuera de ahí (por ejemplo en GitHub Pages), el estado se guarda en este navegador y usa "Descargar HTML actualizado" para llevar el cambio a tu repositorio.
+</footer>
+
+<button class="totop" id="totop" aria-label="Subir">↑</button>`;
+
+function buildFullHtml(state){
+  return "<!doctype html>\n<html lang=\"es\">\n<head>\n" +
+"<meta charset=\"UTF-8\">\n" +
+"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n" +
+"<title>Roadmap maestro — F-Lex → producto vendible</title>\n" +
+"<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n" +
+"<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n" +
+"<link href=\"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap\" rel=\"stylesheet\">\n" +
+"<style>"+PAGE_CSS+"</style>\n" +
+"</head>\n<body>\n" +
+PAGE_BODY_SHELL +
+"\n<script>\n" +
+"window.__INITIAL_STATE__ = "+safeInline(JSON.stringify(state))+";\n" +
+"("+safeInline(appMain.toString())+")();\n" +
+"<\/script>\n</body>\n</html>";
+}
+
+function safeInline(s){ return s.replace(/<\/script/gi, "<\\/script"); }
+
+// ---- runtime wiring (not part of the static document above) ----
+const STORAGE_KEY = "flex-roadmap-state-v1";
+let artifact = null;
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    return (parsed && parsed.fases) ? parsed : null;
+  }catch(e){ return null; }
+}
+function saveLocal(s){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }catch(e){}
+}
+function downloadHtml(html, filename){
+  try{
+    const blob = new Blob([html], {type:"text/html"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }catch(e){}
+}
+
+let state = window.__INITIAL_STATE__ || { fases:{"0":{status:"completa",nota:""}}, updatedAt:null };
+const local = loadLocal();
+if(local && (!state.updatedAt || (local.updatedAt && local.updatedAt > state.updatedAt))){
+  state = local;
+}
+if(!state.fases) state.fases = {};
+for(let n=0;n<=29;n++){ if(!state.fases[n]) state.fases[n] = {status: n===0 ? "completa" : "pendiente", nota:""}; }
+
+function setSaveStatus(txt){ const el = document.getElementById("saveStatus"); if(el) el.textContent = txt; }
+
+async function mark(){
+  state.updatedAt = new Date().toISOString();
+  render(state);
+  saveLocal(state);
+  if(!artifact){
+    setSaveStatus('Guardado en este navegador — usa "Descargar HTML actualizado" para llevarlo a tu repo');
+    return;
+  }
+  setSaveStatus("Guardando…");
+  try{
+    await artifact.publish(buildFullHtml(state));
+    setSaveStatus("Guardado ✓");
+  }catch(err){
+    const code = err && err.code;
+    if(code === "conflict"){ setSaveStatus("Actualizado por otra sesión, recargando…"); }
+    else if(code === "not_writer" || code === "not_granted"){
+      artifact = null;
+      setSaveStatus('Guardado en este navegador — usa "Descargar HTML actualizado" para llevarlo a tu repo');
+    }
+    else { setSaveStatus("No se pudo guardar en el artefacto; sigue guardado en este navegador"); }
+  }
+}
+
+document.addEventListener("click", function(e){
+  const sb = e.target.closest("[data-status-btn]");
+  if(sb){
+    e.preventDefault(); e.stopPropagation();
+    const n = sb.getAttribute("data-status-btn");
+    state.fases[n].status = nextStatus(state.fases[n].status || "pendiente");
+    mark();
+    return;
+  }
+  const gn = e.target.closest("[data-guardar-nota]");
+  if(gn){
+    e.preventDefault(); e.stopPropagation();
+    const n = gn.getAttribute("data-guardar-nota");
+    const input = document.querySelector('input[data-nota="'+n+'"]');
+    state.fases[n].nota = input ? input.value : "";
+    mark();
+    return;
+  }
+  const rb = e.target.closest("#rail button");
+  if(rb){
+    const n = rb.getAttribute("data-n");
+    const el = document.getElementById("fase-"+n);
+    if(el){ el.open = true; el.scrollIntoView({behavior:"smooth", block:"start"}); }
+    return;
+  }
+  if(e.target.id === "expandAll"){ document.querySelectorAll("details.phase").forEach(function(d){ d.open = true; }); return; }
+  if(e.target.id === "collapseAll"){ document.querySelectorAll("details.phase").forEach(function(d){ d.open = false; }); return; }
+  if(e.target.id === "downloadBtn"){
+    state.updatedAt = new Date().toISOString();
+    saveLocal(state);
+    render(state);
+    downloadHtml(buildFullHtml(state), "roadmap-flex.html");
+    setSaveStatus("Archivo descargado — súbelo a tu repositorio para conservar el cambio");
+    return;
+  }
+  if(e.target.id === "totop"){ window.scrollTo({top:0, behavior:"smooth"}); return; }
+});
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Enter" && e.target.matches("input[data-nota]")){
+    e.preventDefault();
+    const n = e.target.getAttribute("data-nota");
+    state.fases[n].nota = e.target.value;
+    mark();
+  }
+});
+
+window.addEventListener("scroll", function(){
+  document.getElementById("totop").classList.toggle("show", window.scrollY > 600);
+});
+
+render(state);
+const f0 = document.getElementById("fase-0");
+if(f0) f0.open = true;
+setSaveStatus("Conectando…");
+
+(async function init(){
+  try{
+    artifact = (window.claude && await window.claude.use("artifact")) || null;
+    setSaveStatus(artifact ? "Listo — los cambios se guardan al hacer clic" : 'Guardando en este navegador — usa "Descargar HTML actualizado" para llevarlo a tu repo');
+  }catch(e){
+    artifact = null;
+    setSaveStatus('Guardando en este navegador — usa "Descargar HTML actualizado" para llevarlo a tu repo');
+  }
+})();
+
+}
+appMain();
+</script>
+</body>
+</html>
